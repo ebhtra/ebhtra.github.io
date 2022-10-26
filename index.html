@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+<head>
+	<script src="../d3.min.js"></script>
+</head>
 <body>
 
 <p>E.Haley</p>
@@ -20,16 +23,28 @@ function revword(word){
 function getMults(num){
 	let rows = 5;
 	let cols = 4;
-	var tabStr = '<table>';
+	var frame = '<table>';
 	for (var row = 0; row < rows; row++){
-		tabStr = tabStr + '<tr>';
+		frame = frame + '<tr>';
 		for (var col = 1; col < cols+1; col++){
-			tabStr = tabStr + '<td>' + (cols * row + col) * num + '</td>';
+			frame = frame + '<td>' + (cols * row + col) * num + '</td>';
 		}
-		tabStr = tabStr + '</tr>';
+		frame = frame + '</tr>';
 	}
-	tabStr = tabStr + '</table>';
-	return(tabStr);
+	frame = frame + '</table>';
+	return(frame);
+}
+
+function hilitePrez(data, name){
+	for (var i = 0; i < data.length-1; i++){
+		if (name.toLowerCase()==data[i]['Name'].toLowerCase()){
+			return('President ' + data[i]['Name'] + ' is said to have been '+
+				data[i]['Height'] + ' inches tall, and to have weighed ' +
+				data[i]['Weight'] + ' pounds, at one point.');
+		}
+	}
+
+	return("sorry, mate");
 }
 
 function calc(){
@@ -40,6 +55,11 @@ function calc(){
 function mults(){
 	var t = document.getElementById("table");
 	t.innerHTML = getMults(document.getElementById('usernum').value);
+}
+
+function pres(){
+	var p = document.getElementById("press");
+	p.innerHTML = hilitePrez(d, document.getElementById('president').value);
 }
 
 </script>
@@ -64,5 +84,47 @@ function mults(){
 
 <div id="table"></div>
 
+<script type="text/javascript">
+
+let url = 'https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module5/data/presidents.csv';
+
+var d = 0;  // store data here to avoid multiple network calls
+
+d3.csv(url).then(function(data) {  // v5 of d3, según docs on git
+
+	var frame = '<table><tr><th scope="col">President   </th>' +
+        		'<th scope="col">Ht</th>' +
+        		'<th scope="col">Lbs</th></tr>';
+	let header = data.columns;   //['Name', 'Height', 'Weight']
+
+	for (var i = 0; i < data.length; i++) {
+        frame = frame + '<tr>';
+        for (var j = 0; j < header.length; j++){
+			frame = frame + '<td>' + data[i][header[j]] + '</td>';
+		}
+		frame = frame + '</tr>';
+	}
+	frame = frame + '</table>';
+
+    var prez = document.getElementById('presi');
+    prez.innerHTML = frame;
+    d = data;  // store it outside this scope for other funcs
+});
+
+</script>
+
+<h4>Type a president's name to display his height and weight:</h4>
+
+<p>
+<form>
+    <input id="president" type="text" size="18">
+    <input type="button" value="Show President's Height and Weight" onClick="pres();">
+</form>
+</p>
+
+<div id="press"></div>
+<br>
+<br>
+<div id="presi"></div>
 </body>
 </html>
