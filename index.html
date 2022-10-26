@@ -36,15 +36,17 @@ function getMults(num){
 }
 
 function hilitePrez(data, name){
-	for (var i = 0; i < data.length-1; i++){
-		if (name.toLowerCase()==data[i]['Name'].toLowerCase()){
+
+	for (var i = 0; i < data.length; i++){
+		if (data[i]['Name'].toUpperCase().includes(name.toUpperCase())){
 			return('President ' + data[i]['Name'] + ' is said to have been '+
-				data[i]['Height'] + ' inches tall, and to have weighed ' +
-				data[i]['Weight'] + ' pounds, at one point.');
+				String(parseInt(+data[i]['Height'] / 12)) + ' feet ' + 
+				String(parseInt(+data[i]['Height'] % 12) + ' inches tall, and to ' + 'have weighed ' + data[i]['Weight'] + 
+					' pounds, at one point.'));
 		}
 	}
 
-	return("sorry, mate");
+	return('Sorry, there are no data for "' + name + '"');
 }
 
 function calc(){
